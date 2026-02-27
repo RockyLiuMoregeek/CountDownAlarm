@@ -1,3 +1,16 @@
+export const WEEKDAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+/**
+ * Return a human-readable label for a custom-days alarm, e.g. "Mon, Wed, Fri".
+ */
+export function getCustomDaysLabel(customDays) {
+  if (!customDays || customDays.length === 0) return 'No days selected';
+  return [...customDays]
+    .sort((a, b) => a - b)
+    .map((d) => WEEKDAY_LABELS[d])
+    .join(', ');
+}
+
 /**
  * Compute the next fire time for a given alarm.
  * Returns a Date or null if the alarm won't fire (e.g. one-time alarm in the past).
@@ -32,6 +45,7 @@ export function getNextFireTime(alarm) {
     const day = candidate.getDay(); // 0=Sun … 6=Sat
     if (alarm.repeat === 'workday' && day >= 1 && day <= 5) return candidate;
     if (alarm.repeat === 'weekend' && (day === 0 || day === 6)) return candidate;
+    if (alarm.repeat === 'custom' && alarm.customDays?.includes(day)) return candidate;
     candidate = new Date(candidate);
     candidate.setDate(candidate.getDate() + 1);
   }
@@ -77,4 +91,5 @@ export const REPEAT_LABELS = {
   daily: 'Daily',
   workday: 'Work Days (Mon–Fri)',
   weekend: 'Weekend (Sat–Sun)',
+  custom: 'Custom Days',
 };
