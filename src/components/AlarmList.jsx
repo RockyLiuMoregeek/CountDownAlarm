@@ -1,9 +1,14 @@
-import { REPEAT_LABELS } from '../utils/alarmUtils';
+import { REPEAT_LABELS, getCustomDaysLabel } from '../utils/alarmUtils';
 import './AlarmList.css';
 
 export default function AlarmList({ alarms, onEdit, onDelete, onToggle }) {
   if (alarms.length === 0) {
     return <p className="alarm-list-empty">No alarms set yet.</p>;
+  }
+
+  function repeatLabel(alarm) {
+    if (alarm.repeat === 'custom') return getCustomDaysLabel(alarm.customDays);
+    return REPEAT_LABELS[alarm.repeat] ?? alarm.repeat;
   }
 
   return (
@@ -15,7 +20,7 @@ export default function AlarmList({ alarms, onEdit, onDelete, onToggle }) {
             <span className="alarm-datetime">
               {new Date(alarm.dateTime).toLocaleString()}
             </span>
-            <span className="alarm-repeat">{REPEAT_LABELS[alarm.repeat] ?? alarm.repeat}</span>
+            <span className="alarm-repeat">{repeatLabel(alarm)}</span>
           </div>
           <div className="alarm-actions">
             <button
